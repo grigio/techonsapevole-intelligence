@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techonsapevole Intelligence</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        #container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            font-size: 16px;
+            line-height: 1.5;
+            border-radius: 5px;
+            outline: none;
+            border: 1px solid #ddd; /* Default border */
+        }
+        @keyframes pulse {
+            to { transform: scale(1.2); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Techonsapevole Intelligence</h1>
+        <textarea id="inputText" placeholder="Start typing here, press <TAB> to autocomplete the sentence..."></textarea>
+    </div>
+
+    <script>
+        const systemPrompt = "Completing partial sentences with a coherent and contextually relevant phrase while adhering to grammatical correctness and avoiding repetition. Add just the new words and do not repeat the beginning of the sentence. Do not add Markdown formatting. Rapresent numbers instead of words"
+        const systemModel = 'gemma2-9b-it-simpo-infinity-preference-q4_k_m-imat:latest' // 'gemma2:2b-instruct-q4_K_M'  // 'llama3.2:3b-instruct-q4_K_M',
+        let isFetching = false;
+        const inputTextElement = document.getElementById('inputText');
+        inputTextElement.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const inputText = this.value;
+                if (!isFetching) {
+                    isFetching = true;
+                    inputTextElement.style.color = '#00f'; // Set text color to blue
+                    fetch('http://localhost:11434/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ollamakeyfake' // Replace with your API key
+                        },
+                        body: JSON.stringify({
+                            model: systemModel,
+                            messages: [
+                                { role: 'system', content: systemPrompt },
+                                { role: 'user', content: inputText }
+                            ],
+                            max_tokens: 50 
+                        })
+                    })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+                        const suggestion = data.choices[0].message.content.trim();
+                        this.value += " " + suggestion;
+                    } else {
+                        console.error("Unexpected response from the API:", data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in the request:', error);
+                    })
+                    .finally(() => {
+                        isFetching = false;
+                        inputTextElement.style.color = '#000'; // Reset text color to default
+                });
+            }
+            }
+        });
+    </script>
+</body>
+</html>
