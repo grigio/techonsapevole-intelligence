@@ -62,8 +62,13 @@
     <button id="darkModeButton" style="position: fixed; top: 20px; right: 20px; background-color: transparent; border: none; color: gray;">🌙</button> <!-- Moon emoji -->
 
     <script>
-        const systemPrompt = "Completing partial sentences with a coherent and contextually relevant phrase while adhering to grammatical correctness and avoiding repetition. Add just the new words and do not repeat the beginning of the sentence. Do not add Markdown formatting. Rapresent numbers instead of words"
+        // CONFIGURE ME
+        const openAIurl = 'http://localhost:11434/v1/chat/completions'
+        const openAItoken = 'fakeKeyNotneededForOllama'
         const systemModel = 'gemma2-9b-it-simpo-infinity-preference-q4_k_m-imat:latest' // 'gemma2:2b-instruct-q4_K_M'  // 'llama3.2:3b-instruct-q4_K_M',
+        // ---
+        
+        const systemPrompt = "Completing partial sentences with a coherent and contextually relevant phrase while adhering to grammatical correctness and avoiding repetition. Add just the new words and do not repeat the beginning of the sentence. Do not add Markdown formatting. Rapresent numbers instead of words"
         let isFetching = false;
         const inputTextElement = document.getElementById('inputText');
         inputTextElement.addEventListener('keydown', function(e) {
@@ -73,11 +78,11 @@
                 if (!isFetching) {
                     isFetching = true;
                     inputTextElement.style.color = '#00f'; // Set text color to blue
-                    fetch('http://localhost:11434/v1/chat/completions', {
+                    fetch( openAIurl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ollamakeyfake' // Replace with your API key
+                            'Authorization': `Bearer $(openAItoken)` // Replace with your API key
                         },
                         body: JSON.stringify({
                             model: systemModel,
