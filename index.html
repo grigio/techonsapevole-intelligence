@@ -44,8 +44,6 @@
         }
         .dark-mode textarea {
             border: 1px solid #666;
-            color: #fff; /* Change text color to white when in dark mode */
-            background-color: #444; /* Change background color to dark grey when in dark mode */
         }
     </style>
 </head>
@@ -54,13 +52,14 @@
         <h1>Techonsapevole Intelligence</h1>
         <textarea id="inputText" placeholder="Start typing here, press <TAB> to autocomplete the sentence..."></textarea>
         <p style="color: #999;">AI-generated text may contain inaccuracies.</p>
+
+        <footer style="text-align:center;">
+            <a href="https://github.com/grigio/techonsapevole-intelligence" target="_blank" style="color:#808080;text-decoration:none;">GitHub</a>
+        </footer>
     </div>
 
-    <footer style="text-align:center;">
-        <a href="https://github.com/your-github-repo" target="_blank">GitHub</a>
-    </footer>
 
-    <button id="darkModeButton" style="position: fixed; top: 20px; right: 20px;">Dark Mode</button>
+    <button id="darkModeButton" style="position: fixed; top: 20px; right: 20px; background-color: transparent; border: none; color: gray;">🌙</button> <!-- Moon emoji -->
 
     <script>
         const systemPrompt = "Completing partial sentences with a coherent and contextually relevant phrase while adhering to grammatical correctness and avoiding repetition. Add just the new words and do not repeat the beginning of the sentence. Do not add Markdown formatting. Rapresent numbers instead of words"
@@ -87,7 +86,6 @@
                                 { role: 'user', content: inputText }
                             ],
                             max_tokens: 50
-                            max_tokens: 50 
                         })
                     })
                 .then(response => response.json())
@@ -111,8 +109,20 @@
         });
 
         const darkModeButton = document.getElementById('darkModeButton');
+        let isDarkMode = false;
         darkModeButton.addEventListener('click', function() {
-            document.body.classList.toggle('dark-mode');
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                this.textContent = '☀️'; // Sun emoji
+                document.body.classList.add('dark-mode');
+                inputTextElement.style.backgroundColor = '#444';
+                inputTextElement.style.color = '#fff';
+            } else {
+                this.textContent = '🌙'; // Moon emoji
+                document.body.classList.remove('dark-mode');
+                inputTextElement.style.backgroundColor = '#fff';
+                inputTextElement.style.color = '#000';
+            }
         });
     </script>
 </body>
